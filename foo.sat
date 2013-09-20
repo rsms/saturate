@@ -1,0 +1,64 @@
+a:
+  x = A
+  b:
+    x = B
+    c:
+      x = C
+  # here, we should be back at a:
+print a:b:c:x
+
+a = World  # no collision w/ ns as `a:` is represented by the symbol "a:" (not "a")
+
+DEBUG_END
+cinnamon:
+  kind = Spice
+  has_a_dry_sensation = Yes
+
+foo:
+  x = 1
+  y = a:b:c: x
+  using std:io:
+  read = std:io:fread
+# foo:y == foo:z == C
+
+# milk:kind = Dairy, milk:has_a_dry_sensation = No
+milk:
+  kind = Dairy, has_a_dry_sensation = No
+milk:
+  kind = Dairy
+  has_a_dry_sensation = No
+
+# A list
+grocery_list = [cinnamon, milk, asparagus]
+  # asparagus = {
+  #   kind = Vegetable
+  #   has_a_dry_sensation = Maybe }
+# And this is an error since the list contains mixed types (Ns,Ns,Sym)
+# grocery_list = [cinnamon, milk, Asparagus]
+
+print Hello name From location
+  name = "Smith"
+  location = "Stockholm" Or gbg
+    gbg = "Goteborg"
+    fail = 123
+
+# => (print Hello "Smith" From ("Stockholm" Or "Goteborg"))
+
+lolcat x =
+  x * y
+    y = 5
+# => {lolcat x} = x * 5
+
+# What does this mean?
+a = b = c
+
+# When leaving a scope, append it to the current scope's last expression
+# First expression after ':' is the body
+# cost_of price In country = price * tax
+#   tax = switch country
+#     Sweden 0.25
+#     Denmark 0.2
+#     else 0.1
+
+print "A pizza costs" cost_of_pizza
+  cost_of_pizza = cost_of 45 In Sweden

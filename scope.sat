@@ -1,0 +1,162 @@
+
+a (b 2 (c 3))
+
+a (b 2
+    c 3
+    )
+
+a (b 2
+    c 3)
+
+(c 3
+d 4)
+
+a (b 2
+    (c 3
+      d 4)
+  )
+
+a (b 2; c 3)
+
+a
+  b 2 # Next comes c
+  c (3 4)
+    d e { f g; h }
+# ==
+a
+  b 2; c 3
+
+a { b 2; c 3; }
+a { b 2; c 3 }
+
+a ((b 2) (c 3))
+
+(a ((b 2)
+  (c 3)
+  ))
+
+# Set var x to namespace foo:
+x: ns foo
+# Also define the namespace:
+y: ns foo
+  a: 1
+  b: 2
+# Don't capture the namespace
+ns foo
+  a: 1
+  b: 2
+# Could fail if foo or foo:bar
+# doesn't exist:
+z: ns foo:bar:baz
+m: import std:math
+
+# Functions
+foo: x/[Int] y/Int -> x * c
+  c: 1.618
+r: foo 2  # = 3.236
+
+foo1: x * c
+  c: 1.618
+r: foo1 {x:2}  # = 3.236
+
+foo2:
+  tmp0: x * c
+    c: 1.618
+  tmp0 + 3
+r: foo2 {x:2}  # = 6.236
+
+foo: -> x y { * x y 3 }
+# foo: x y { * x y 3 }
+# foo: x y -> * x y 3
+
+map names -> name { upcase name }
+map names (name -> upcase name)
+map names (name
+  {name: upcase name})
+map names :> name { upcase name }
+
+capitalize: names ->
+  map names (name ->
+    join (upcase name[0]
+          name[1:]))
+
+capitalize: names ->
+  map names
+    name ->
+      join
+        upcase name[0]
+        name[1:]
+
+__END__
+
+def capitalize(names):
+  map(names, lambda(name):
+    join(upcase(name[0]),
+         name[1:]))
+
+function capitalize(names) {
+  map(names, function (name) {
+    join(upcase(name[0]),
+         name[1:])
+  }
+}
+
+__END__
+
+foo: a b c
+
+# A namespace directive can
+# only appear as the first item
+# in a scope
+foo: a 1
+  b 2
+  d 3
+  e 4
+# == namespace currentns:foo: {..
+foo: a 1 (b 2) (c 3) (d 4)
+
+foo:a 1  # => currentns:foo:a 1
+:foo:a 1  # => foo:a 1
+
+foo:
+  a 1
+  b 2
+  bar:
+    c 2
+# ==
+foo: (a 1) b 2 (bar: (c 3))
+# currentns:foo:bar:c == 2
+#
+#   foo: -> L1 -> b -> 2 -> L2
+#   L1 -> a -> 1
+#   L2 -> bar: -> L3
+#   L3 -> c -> 3
+#
+#       foo:
+#      / | \
+#   (a   b  (bar:
+#    |   |   |
+#    1   2  (c
+#            |
+#            3
+#
+
+# foo:bar: x  # OK
+# foo: bar: x  # OK
+# foo: x bar: y  # Error
+# foo: x (bar: y)  # OK
+
+
+I actually think Haskell does the
+layout thing better than Python.
+Indented blocks and line breaks
+desugar to curly braces and
+semicolons.
+
+a { b c; d e; }
+a
+  b c; d e
+a
+  b c
+  d e
+

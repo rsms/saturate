@@ -1,0 +1,10 @@
+*.o
+*.a
+*.d
+*.gz
+lab
+old-*
+test/*
+.obj*
+sat
+sat-g
