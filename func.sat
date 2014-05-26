@@ -1,0 +1,60 @@
+
+List<T> = Object
+  # A type that builds upon "Object" with one parametric type `T`
+  head:T
+  tail:List<T>
+# List<T> = Object { head:T tail:List }
+
+List <head tail> =
+  # Constructor function for List
+  List<typeof head> { head = head; tail = tail }
+
+List <head> = List head nil
+
+foo <x y> = x * y * z
+  z = x * 4
+
+prepend <tail:List item> =
+  List { tail = tail; head = item }
+# prepend :List :? = <tail item> List...
+
+build_abc <names> =
+  buddies = List names:a             # => List<Text> {head:"Anna"; tail:nil}
+  prepend_to_Anna = prepend buddies  # Partial application
+    # prepend_to_Anna :? = <item> List { tail = buddies; head = item }
+  buddies = prepend_to_Anna names:b  # => List<Text> {head:"Bob"; tail:{head:"Anna"; tail:nil}}
+  prepend buddies names:c  # => List<Text> {head:"Cat"; {head:"Bob"; tail:{head:"Anna"; tail:nil}}}
+
+names = Object
+  # Dictionary of names
+  a = "Anna"
+  b = "Bob"
+  c = "Cat"
+
+names =
+  # Providing no type defaults to "Object"
+  a = "Anna"
+  b = "Bob"
+  c = "Cat"
+
+buddies = build_abc names
+
+x = map names (<name> upcase name)
+
+main =
+  map 0..(len buddies) <i>
+    print "Buddy " i " = " buddies[i]
+  Ok
+
+# --------------------------------------------
+# Macro
+defmacro def name params body…
+  name <params…> = { body… }
+
+def prepend (tail item)
+  List { head = item; tail = tail }
+
+# Apply functions in two positions: prefix and postfix
+foo 1 2
+(1 2):foo  # desugars to `foo 1 2`
+{y = 2; x = 1}:foo  # desugars to `foo {y = 2; x = 1}`
